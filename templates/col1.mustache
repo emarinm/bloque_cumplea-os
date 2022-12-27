@@ -1,0 +1,86 @@
+<style>
+    
+    .block_bcn_birthdays_section .secciones{
+        display:flex;
+    }
+
+@media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+  .block_bcn_birthdays_section .secciones {
+   display: flex;
+   flex-direction: column;
+   gap: 2rem;
+  }
+}
+
+.tutorial-section-container {
+    display: flex;
+    }
+    .tutorial-section-image-container {
+    margin-right: 10px; 
+    width: auto;
+    }
+
+    .tutorial-section-text-container {
+    width: 50%;
+    }
+
+    @media only screen and (max-width: 768px) {
+    .tutorial-section-container {
+        flex-direction: row;
+        align-items: center;
+        gap: 2rem;
+        }
+
+    .tutorial-section-image-container {
+        margin-right: 0; 
+        width: auto;
+    }
+
+    .tutorial-section-text-container {
+        width: auto;
+        text-align: center;
+    }
+}
+
+.tutorial-section-title h1{ 
+    font-size: 1.75rem; 
+    color: {{site-text-secondary-color}}; 
+    margin-bottom: 0px; 
+    font-weight: 700;
+}
+
+.tutorial-section-text-content{
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+
+</style>
+{{{columns_stylesheet}}}
+<div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="content-title text-vertical-{{title_hposition}}">
+                {{#title_enabled}}<div>{{{title}}}</div>{{/title_enabled}}
+            </div>
+        </div>
+
+        <div class="content-sub-title text-vertical-{{subtitle_hposition}}">
+            {{#subtitle_enabled}} <div>{{{subtitle}}} </div>{{/subtitle_enabled}}
+        </div>
+        <div class="secciones">
+            <section class="content-section  {{contentsetting_col1_position}}">
+
+                <div class="content-text-body col1-text {{contentsetting_col1_text_position_ver}} {{contentsetting_col1_text_position_hor}}">
+                    {{{content_column_1}}}
+                </div>
+            </section>
+
+        </div>
+</div>
+
+
+
+

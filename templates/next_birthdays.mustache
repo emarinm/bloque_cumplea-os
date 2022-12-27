@@ -1,0 +1,14 @@
+{{next_birthdays_json}}
+<ul>
+    {{#next_birthdays_json}}
+        <li>
+           <b>Date:</b> {{date}} <br> 
+           <b>Cumpleaños:</b><br>
+            {{#birthdays}}
+                <b>{{.}}</b><br>
+            {{/birthdays}}            
+        </li>   
+    {{/next_birthdays_json}}
+</ul> 
+ 
+

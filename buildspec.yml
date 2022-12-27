@@ -1,0 +1,11 @@
+version: 0.2
+phases:
+  post_build:
+    commands:
+      - echo "Copying files"
+      - mkdir -p $CODEBUILD_EFS_FOLDER/blocks
+      - mkdir -p $CODEBUILD_EFS_FOLDER/blocks/bcn_birthdays_section
+      - cp -r ./ $CODEBUILD_EFS_FOLDER/blocks/bcn_birthdays_section
+      - chown 48:48 $CODEBUILD_EFS_FOLDER/blocks
+      - chown -R 48:48 $CODEBUILD_EFS_FOLDER/blocks/bcn_birthdays_section
+      - chmod -R 775 $CODEBUILD_EFS_FOLDER/blocks/bcn_birthdays_section

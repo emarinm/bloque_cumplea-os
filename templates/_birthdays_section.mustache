@@ -1,0 +1,67 @@
+<style>
+
+    .block_bcn_birthdays_section .banner-{{idbloque}}{
+        background-size: 100%;
+        background-repeat: no-repeat;
+        color:{{color_primario}} !important;
+    }
+
+    .banner-{{idbloque}}.image-right, .banner-{{idbloque}}.image-left {
+        width: {{widthpercent}}%;
+    }
+
+
+.banner-{{idbloque}} .image-full{
+    height: {{#blockheight}} {{size}}{{unit}} {{/blockheight}} {{^blockheight}} auto {{/blockheight}};
+    object-fit: cover;
+    object-position: left center;
+    width: 100%;
+    z-index: {{bg_zindex}};
+    position: {{bg_position}};
+    left: {{bg_absolute_left}};
+    top: {{bg_absolute_top}};
+    right: {{bg_absolute_right}};
+    bottom: {{bg_absolute_bottom}};
+}
+
+.banner-{{idbloque}} .image-child {
+    position: relative;
+    z-index: 10;
+    height: auto;
+    align-self: center;
+    justify-self: center;
+    width: {{widthpercent}}%;
+}
+.banner-{{idbloque}} .image-child img {
+    width: 100%;
+    height: auto;
+}
+
+.block_bcn_birthdays_section .text-vertical-center div{
+    width: 100%;
+}
+
+
+</style>
+<div class="banner banner-{{idbloque}} banner-image-{{imagePositionHorizontal}}">
+    {{#background_image}} 
+        <img class="image-full" src="{{ background_image }}" alt="Image Bg" fetchpriority="{{fetchpriority}}">
+    {{/background_image}}
+    {{^background_image}}
+    <div class="image-child image-{{imagePositionHorizontal}}">
+        {{#imagen}}
+            <img src="{{ imagen }}" alt="Image" fetchpriority="{{fetchpriority}}">
+        {{/imagen}}
+    </div>
+    <div class="content-title text-vertical-{{ textPositionVertical }}">
+        {{#title}}<div>{{{text}}}</div>{{/title}}
+        {{#subtitulo}} <div>{{{text}}} </div>{{/subtitulo}}
+    </div>
+    {{/background_image}}
+</div>
+{{#js}}
+    require(['jquery', 'jqueryui'], function($, jqui) {
+        // JQuery UI is available via $.ui
+        $(".block-controls").draggable();
+    });
+{{/js}}

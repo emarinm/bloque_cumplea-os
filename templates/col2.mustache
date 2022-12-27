@@ -1,0 +1,899 @@
+<style>
+
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active,
+  .show > .btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #0b529000 !important;
+    border-color: #0a4b8400 !important; }
+
+.btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus,
+    .show > .btn-primary.dropdown-toggle:focus {
+      box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0) !important; }
+
+.block_bcn_birthdays_section .secciones{
+    display:flex;
+}
+
+.block_bcn_birthdays_section {
+    background:{{block_bg_color}} !important;
+    padding-top: 25px;
+    padding-bottom: 0px;    
+}
+
+.bcn-title h1{
+    color: {{title_text_color}}
+}
+
+.bcn-nextbd-title h3{
+    color: {{next_birtdays_title_text_color}}
+}
+
+@media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+  .block_bcn_birthdays_section .secciones {
+   display: flex;
+   flex-direction: column;
+   gap: 2rem;
+  }
+}
+
+.tutorial-section-container {
+    display: flex;
+    }
+    .tutorial-section-image-container {
+    margin-right: 15px; 
+    width: auto;
+    }
+
+    .tutorial-section-text-container {
+    width: 50%;
+    }
+
+    @media only screen and (max-width: 768px) {
+    .tutorial-section-container {
+        flex-direction: row;
+        align-items: center;
+        gap: 2rem;
+        }
+
+    .tutorial-section-image-container {
+        margin-right: 0; 
+        width: auto;
+    }
+
+    .tutorial-section-text-container {
+        width: auto;
+        text-align: center;
+    }
+}
+
+.tutorial-section-title h1{ 
+    font-size: 1.75rem; 
+    margin-bottom: 0px; 
+    font-weight: 700;
+}
+
+.tutorial-section-text-content{
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.col1-text h1{
+    color: {{content_column_1_text_color}};
+}
+
+.col2-text h1{
+    color: {{content_column_2_text_color}};
+}
+
+.video_icon_color{
+    fill: {{icon_1_color}};
+}
+
+.pdf_icon_color{
+    fill: {{icon_2_color}};
+}
+
+.video-2 {
+	letter-spacing: -.05em;
+}
+
+.video-3 {
+	letter-spacing: -.01em;
+}
+
+.video-4 {
+	fill: #fff;
+	font-size: 20.64px;
+}
+
+.pdf-2 {
+	letter-spacing: 0em;
+}
+
+.pdf-3 {
+	letter-spacing: -.05em;
+}
+
+.pdf-4 {
+	letter-spacing: -.01em;
+}
+
+.pdf-5 {
+	fill: #fff;
+	font-size: 20.64px;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+  right: 12px;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.next_birtdays_section {
+    border-left-style: solid;
+    border-left-color: {{next_birtdays_leftline_color}};
+    padding-left : 40px;
+    left: 2px;
+    border-left: 1px solid;
+    height: 242px;
+    top: 25px;
+}
+
+.text-vertical-text-center{
+    align-self: center;
+}
+
+.next_birthdays_date {
+    background-color: {{next_birtdays_date_bg_color}};
+    color: {{next_birtdays_date_text_color}};
+    width: 47%;
+    padding-left: 15px;    
+    font-weight: bold;
+}
+
+.next_birtdays_section_elements {        
+    overflow-y: scroll; 
+    height: 78%;
+    font-weight: bold;
+}
+.next_birtdays_section_elements ul {        
+    list-style: none;
+    margin-bottom: 0px;
+    height: 50px;
+    padding-left: 0px;
+}
+.today_birtdays_section_elements{
+    width: 100%;
+    height: 90%;
+    background-color: #FFF;
+}
+.date_today {
+    background-color: {{today_birtdays_date_bg_color}};
+    color: {{today_birtdays_date_color}};
+    width: 88%;
+    font-weight: bold;
+    text-align: center;
+    height: 40px;
+    margin-left: 394px;
+    
+}
+
+
+.nombre_today { 
+    color:{{today_birtdays_name_color}};
+    position: relative;
+    bottom: 234px;
+    width: 300px;
+    margin-left: 331px;
+    line-height: 1.5rem;
+}
+
+.nombre_today h3{
+    font-weight: 700;
+    line-height: 1.5rem;
+    font-size: 25px;
+}
+
+
+.day{
+    width: 67px;
+    float: left;
+    margin-left: 340px;
+    height: 40px;
+    background-color: {{title_text_color}};
+    color: {{today_birtdays_date_color}}   
+}
+
+.day h2{
+        font-weight: 700;
+}
+
+.img img{
+    border-radius: 100%;
+    bottom: 134px;
+    width: 240px;
+    height: 240px;
+    position: relative;
+    overflow: hidden;
+    
+}
+{{#background_image}} 
+.hero-image {
+  background-image: url({{background_image}});  
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}             
+{{/background_image}}
+
+/*CARRUSEL 3*/
+.today_birtdays_section_elements_plain {        
+    overflow-y: scroll; 
+    height: 80%;
+    font-weight: bold;
+}
+
+.today_birtdays_section_elements_plain ul {        
+    list-style: none;
+}
+.today_birtdays_section_elements_plain{
+    width: 100%;
+    height: 90%;    
+}
+.today_birtdays_section_elements_plain_details {        
+    padding-left: 10px;
+    margin-left: 10px;
+}
+
+/* END - CARRUSEL 3  */
+
+.position_next{
+    font-size: 12px;
+    font-weight: 500;
+}
+
+
+/*CARRUSEL 1*/
+.MultiCarousel { 
+    float: left; 
+    overflow: hidden; 
+    padding: 15px; 
+    width: 100%; 
+    position:relative; 
+    }
+
+.MultiCarousel .MultiCarousel-inner { 
+    transition: 1s ease all; 
+    float: left; }
+
+.MultiCarousel .MultiCarousel-inner .item { 
+    float: left;
+    }
+
+.MultiCarousel .MultiCarousel-inner .item > div { 
+    text-align: center; 
+    padding:10px; 
+    margin:10px; 
+    color:#666;
+    height: 320px;
+    width: 320px;
+  }
+.MultiCarousel .leftLst, .MultiCarousel .rightLst { 
+    position:absolute; 
+    border-radius:50%; 
+    top:calc(50% - 20px); }
+
+.MultiCarousel .leftLst { left:0;top: 110px; }
+
+.MultiCarousel .rightLst { right:0; top: 100px;}
+
+.MultiCarousel .leftLst.over, .MultiCarousel .rightLst.over { pointer-events: none; top: 102px; }
+
+.leftLst{
+    margin-left: 25px;
+}
+
+
+.today{
+    margin-left: 240px;
+    width: 142px;
+    margin-top: 7px;
+    position: relative;
+    color: {{today_birtdays_date_bg_color}};
+
+}
+
+.today h1{
+    text-transform: uppercase;
+    font-weight: 900;
+    font-size: 3.2rem;
+     width: 426px;
+}
+
+
+.mediocirculo {
+    width: 194px; 
+    height: 35px; 
+    position: absolute;
+    top: 183px;
+    background-color: {{title_text_color}};
+    margin-left: 51px;
+
+   
+}
+
+.no_bold-1 {
+    position: relative;
+    bottom: 174px;    
+    width: 500px;
+    margin-left: 20px;
+}
+
+.leftLst{
+    color: #1d2125;
+    background-color: #ffffff00;
+    border-color: #ffffff00;
+
+    
+}
+
+.rightLst {
+    color: #1d2125 !important;
+    background-color: #ffffff00 !important;
+    border-color: #ffffff00 !important;
+}
+
+.leftLst{
+    color: #1d2125 !important;
+    background-color: #ffffff00 !important;
+    border-color: #ffffff00 !important;
+
+    
+}
+
+.rightLst {
+    color: #1d2125 !important;
+    background-color: #ffffff00 !important;
+    border-color: #ffffff00 !important;
+}
+
+.btn-primary:hover {
+    color: #1d2125 !important;
+    background-color: #ffffff00 !important;
+    border-color: #ffffff00 !important;
+}
+
+.btn-primary:focus, .btn-primary.focus {
+    outline: 0.2rem solid #071f00;
+    box-shadow: inset 0 0 0 2px #fff0 !important;
+}
+
+/* END - CARRUSEL 1  */
+
+/*CARRUSEL 2*/
+
+.img-2 img {
+   border-radius: 0% 0% 3% 3%;
+    bottom: 17px;
+    width: 240px;
+    height: 240px;
+    position: relative;
+    overflow: hidden;
+    left: 82px;
+    margin-right: 60px;
+    z-index: 0;
+}
+
+
+.date_today-2 {
+    background-color: {{today_birtdays_date_bg_color}};
+    color: {{today_birtdays_date_color}};
+    font-weight: bold;
+    text-align: center;
+    height: 40px;
+    margin-left: 81px;
+    position: absolute;
+    z-index: 1;
+    width: 242px;
+    margin-top: 183px;
+    border-radius: 0% 0% 6% 6%
+}
+
+.date_today-2 h2{
+    text-transform: uppercase;
+    font-size: 1.3rem;
+    color: #fff;
+    background: none;
+    margin: 0;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.today-2{
+
+    margin-bottom: 0px;
+    top: 2px;
+    bottom: 220px;
+    margin-left: 322px;
+    width: 142px;
+    margin-top: 7px;
+    position: absolute;
+
+
+}
+
+.today-2 img{
+        width: 400px;
+}
+
+.nombre_today-2 { 
+    color:{{today_birtdays_name_color}};
+    font-weight: bold;
+    position: relative;
+    bottom: 118px;
+    width: 310px;
+    left: 369px;
+}
+
+.nombre_today-2 h3{ 
+    font-weight: 700;
+    line-height: 1.5rem;
+}
+
+.no_bold-2 {
+    width: 500px;
+    position: relative;
+    bottom: 121px;
+    margin-left: 172px;
+}
+
+/*END CARRUSEL 2*/
+
+/* CARRUSEL 4*/
+    .carrusel4{   
+        overflow: hidden; 
+        padding: 15px; 
+        width: 100%; 
+        position:relative; 
+        height: 173.333px;    
+    }
+
+    .carrusel4_ul {		
+		top: 50%;
+		width: 100%;
+		height: 200px; 
+		left: 50%;
+		margin-left: -400px;
+		margin-top: -130px;
+	}
+ 
+	.carrusel4_li {
+		width: 25%;
+		list-style-type: none;
+		position: absolute;
+		top: 0;
+		padding: 20px;
+		height: 200px; 
+		opacity: 0;		
+		text-align: center;
+		transition: 1s opacity; 
+        color: #000;
+	}
+
+	.active {
+		opacity: 1;
+	}
+
+/* END - CARRUSEL 4*/
+.wrapper {
+    position: relative;
+    height:100%;
+    width:100%;    
+}
+.button-container {
+    position: relative;
+    height:50%;
+    width:100%;
+    text-align: center; 
+}
+
+.centered-element {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.content-title-text-center{     
+    margin-left: auto;
+    margin-right: auto;
+    display: table;
+}
+.content-title-text-right{      
+    margin-left: auto; 
+    margin-right: 0;
+    display: table;
+}
+.content-title-text-left{      
+    margin-left: 0; 
+    margin-right: auto;
+    display: table;
+    margin-bottom: -5px;
+}
+
+.today_birtdays_section_elements{
+    width: 100%;
+    height: 90%;
+    background-color: #FFF;
+}
+
+
+</style>
+
+<div class="hero-image">    
+    <div class="container">
+        <div class="row">            
+            <div class="content-title-{{title_hposition}} ">
+                {{#title_enabled}}              
+                   {{{title}}} 
+                {{/title_enabled}}
+            </div>    
+        </div>       
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="column col-md-8 col-sm-12" >
+                {{^today_birthdays_json}}
+                    <div class="wrapper">
+                        <div class="button-container"><div class="centered-element">
+                            <h3>{{mensaje_inicial}}</h3>
+                            </div></div>
+                    </div>
+                {{/today_birthdays_json}}
+
+                {{#carrusel_1}} 
+                    {{#today_birthdays_json}} 
+                        <div class="today_birtdays_section_elements">                     
+                            <div class="MultiCarousel block_bcn_birthdays_section" data-items="1,1,1,1" data-slide="1" id="MultiCarousel"  data-interval="1000">
+                                <div class="MultiCarousel-inner">                                                                                
+                                        {{#birthdays}}
+                                            <div class="item col-md-12 col-sm-12">
+                                                <div class= profile>
+                                                <div class= "day"><h2>HOY</h2></div>
+                                                <div class="date_today"><h2>{{date}}</h2></div> 
+                                                <div class= "today"><h1>FELIZ DÍA</h1></div>
+                                                <div class= "img">
+                                                {{{picture}}}
+                                                </div>
+                                                <div class="nombre_today"><h3>{{name}}</h3></div>  
+                                                {{^position}}                                                   
+                                                <div class="no_bold-1"><h3>{{position}}</h3></div>
+                                                {{/position}} 
+                                                </div>
+                                            </div>                                     
+                                        {{/birthdays}}                               
+                                </div>
+                                <button class="btn btn-primary leftLst"><</button>
+                                <button class="btn btn-primary rightLst">></button>
+                            </div>                                               
+                        </div>                                 
+                    {{/today_birthdays_json}}
+                {{/carrusel_1}}
+
+                 {{#carrusel_2}} 
+                    {{#today_birthdays_json}} 
+                        <div class="today_birtdays_section_elements">                     
+                            <div class="MultiCarousel block_bcn_birthdays_section" data-items="1,1,1,1" data-slide="1" id="MultiCarousel"  data-interval="1000">
+                                <div class="MultiCarousel-inner">                                                                                
+                                        {{#birthdays}}
+                                            <div class="item ">
+                                                <div class= profile>
+                                               <div class="date_today-2"><h2>{{date}}</h2></div> 
+                                                <div class="today-2"><img src="{{{imageone}}}"  width="250" height="120" ></div>
+                                                <div class= "img-2">{{{picture}}}
+                                                </div>
+                                                <div class="nombre_today-2"><h3>{{name}}</h3></div>   
+                                                 {{^position}}                                                   
+                                                <div class="no_bold-2"><h3>{{position}}</h3></div>
+                                                 {{/position}}                                               
+                                                </div>
+                                            </div>                                     
+                                        {{/birthdays}}                               
+                                </div>
+                                <button class="btn btn-primary leftLst"><</button>
+                                <button class="btn btn-primary rightLst">></button>
+                            </div>                                               
+                        </div>                                 
+                    {{/today_birthdays_json}}
+                {{/carrusel_2}}
+
+                {{#carrusel_3}} 
+                    {{#today_birthdays_json}}  
+                        <div class="today_birtdays_section_elements_plain">                     
+                            <div class="today_birtdays_section_elements_plain_details">  
+                                    <ul>
+                                    {{#birthdays}}
+                                        <li>
+                                            <h3><i class="icon fa fa-birthday-cake"></i><b>{{name}}</b></h3>
+                                            {{#position}}
+                                            <span class="no_bold">{{position}}</span>
+                                            {{/position}}
+                                        </li>
+                                    {{/birthdays}}      
+                                    </ul>
+                                </div>      
+                        </div>    
+                        <div class="date_today"><h3>{{date}}</h3></div>                                 
+                    {{/today_birthdays_json}}
+                {{/carrusel_3}}
+
+                {{#carrusel_4}} 
+                    {{#today_birthdays_json}}  
+
+                    <div class="today_birtdays_section_elements"> 
+                        <div class="carrusel4">  
+                            <ul id="c" class='carrusel4_ul'>                             
+                                {{#birthdays}}
+                                        <li class='carrusel4_li'>
+                                            {{{picture}}}                               
+                                            <div class="nombre_today">{{name}}</div> 
+                                        </li>
+                                    {{/birthdays}}  
+                            </ul>
+                        </div>       
+                    </div> 
+                    <div class="date_today"><h3>{{date}}</h3></div>                                 
+                    {{/today_birthdays_json}}
+                {{/carrusel_4}}
+
+
+
+            </div>
+            <div class="column next_birtdays_section col-md-4 col-sm-12">
+                {{#subtitle_enabled}}                
+                <div class="content-title-{{next_birtdays_title_hposition}} ">
+                    {{{next_birtdays_title}}}                                   
+                </div>
+                {{/subtitle_enabled}}  
+                                              
+                <div class="next_birtdays_section_elements"> 
+                        {{^next_birthdays_json}}
+                            <div class="wrapper">
+                                <div class="centered-element">
+                                    <h3>{{mensaje_inicial_nb}}</h3>
+                                </div>
+                            </div>
+                        {{/next_birthdays_json}}
+                        {{#next_birthdays_json}}
+                            <div class="next_birthdays_date" >{{date}}</div>
+                            <div class="next_birthdays_details">  
+                                <ul id= "next_birthday">
+                                {{#birthdays}}
+                                    <li>{{name}}
+                                        {{#position}}
+                                        <br><span class="position_next">{{position}}</span>
+                                        {{/position}}
+                                        <br>                                        
+                                    </li>
+                                {{/birthdays}}      
+                                </ul>
+                            </div>                                         
+                        {{/next_birthdays_json}}                                                      
+                </div>
+            </div>
+        </div>          
+    </div>
+</div>
+
+
+{{#js}}
+ $(document).ready(function () {
+    
+    require(['jquery', 'jqueryui'], function($, jqui) {     
+       
+        var itemsMainDiv = ('.MultiCarousel');
+        var itemsDiv = ('.MultiCarousel-inner');
+        var itemWidth = "";
+
+        $('.leftLst, .rightLst').click(function () {
+            var condition = $(this).hasClass("leftLst");
+            if (condition)
+                click(0, this);
+            else
+                click(1, this)
+        });
+
+        ResCarouselSize();
+
+        $(window).resize(function () {
+            ResCarouselSize();
+        });
+
+        //this function define the size of the items
+        function ResCarouselSize() {
+            var incno = 0;
+            var dataItems = ("data-items");
+            var itemClass = ('.item');
+            var id = 0;
+            var btnParentSb = '';
+            var itemsSplit = '';
+            var sampwidth = $(itemsMainDiv).width();
+            var bodyWidth = $('body').width();
+            $(itemsDiv).each(function () {
+                id = id + 1;
+                var itemNumbers = $(this).find(itemClass).length;
+                btnParentSb = $(this).parent().attr(dataItems);
+                itemsSplit = btnParentSb.split(',');
+                $(this).parent().attr("id", "MultiCarousel" + id);
+
+
+                if (bodyWidth >= 1200) {
+                    incno = itemsSplit[3];
+                    itemWidth = sampwidth / incno;
+                }
+                else if (bodyWidth >= 992) {
+                    incno = itemsSplit[2];
+                    itemWidth = sampwidth / incno;
+                }
+                else if (bodyWidth >= 768) {
+                    incno = itemsSplit[1];
+                    itemWidth = sampwidth / incno;
+                }
+                else {
+                    incno = itemsSplit[0];
+                    itemWidth = sampwidth / incno;
+                }
+                $(this).css({ 'transform': 'translateX(0px)', 'width': itemWidth * itemNumbers });
+                $(this).find(itemClass).each(function () {
+                    $(this).outerWidth(itemWidth);
+                });
+
+                $(".leftLst").addClass("over");
+                $(".rightLst").removeClass("over");
+
+            });
+        }
+
+        //this function used to move the items
+        function ResCarousel(e, el, s) {
+            var leftBtn = ('.leftLst');
+            var rightBtn = ('.rightLst');
+            var translateXval = '';
+            var divStyle = $(el + ' ' + itemsDiv).css('transform');
+            var values = divStyle.match(/-?[\d\.]+/g);
+            var xds = Math.abs(values[4]);
+            if (e == 0) {
+                translateXval = parseInt(xds) - parseInt(itemWidth * s);
+                $(el + ' ' + rightBtn).removeClass("over");
+
+                if (translateXval <= itemWidth / 2) {
+                    translateXval = 0;
+                    $(el + ' ' + leftBtn).addClass("over");
+                }
+            }
+            else if (e == 1) {
+                var itemsCondition = $(el).find(itemsDiv).width() - $(el).width();
+                translateXval = parseInt(xds) + parseInt(itemWidth * s);
+                $(el + ' ' + leftBtn).removeClass("over");
+
+                if (translateXval >= itemsCondition - itemWidth / 2) {
+                    translateXval = itemsCondition;
+                    $(el + ' ' + rightBtn).addClass("over");
+                }
+            }
+            $(el + ' ' + itemsDiv).css('transform', 'translateX(' + -translateXval + 'px)');
+        }
+
+        //It is used to get some elements from btn
+        function click(ell, ee) {
+            var Parent = "#" + $(ee).parent().attr("id");
+            var slide = $(Parent).attr("data-slide");
+            ResCarousel(ell, Parent, slide);
+        }
+
+    });
+
+    require(['block_bcn_birthdays_section/slick'], function (slick) {
+        // alternar texto de cursos cuando se pasa por la tarjeta
+        $('.autoplay').slick({
+            slidesToShow: 3,
+            slidesToScroll: 3,            
+            autoplay: true,
+            autoplaySpeed: 3000                        
+        });
+    });
+  
+    /*CARRUSEL 4*/
+    var timer = 4000;
+
+    var i = 0;
+    var max = $('#c > li').length;
+ 
+	$("#c > li").eq(i).addClass('active').css('left','0');
+	$("#c > li").eq(i + 1).addClass('active').css('left','25%');
+	$("#c > li").eq(i + 2).addClass('active').css('left','50%');
+	$("#c > li").eq(i + 3).addClass('active').css('left','75%');
+ 
+
+	setInterval(function(){ 
+
+		$("#c > li").removeClass('active');
+
+		$("#c > li").eq(i).css('transition-delay','0.25s');
+		$("#c > li").eq(i + 1).css('transition-delay','0.5s');
+		$("#c > li").eq(i + 2).css('transition-delay','0.75s');
+		$("#c > li").eq(i + 3).css('transition-delay','1s');
+
+		if (i < max-4) {
+			i = i+4; 
+		}
+
+		else { 
+			i = 0; 
+		}  
+
+		$("#c > li").eq(i).css('left','0').addClass('active').css('transition-delay','1.25s');
+		$("#c > li").eq(i + 1).css('left','25%').addClass('active').css('transition-delay','1.5s');
+		$("#c > li").eq(i + 2).css('left','50%').addClass('active').css('transition-delay','1.75s');
+		$("#c > li").eq(i + 3).css('left','75%').addClass('active').css('transition-delay','2s');
+	
+	}, timer);
+ 
+    /*CARRUSEL 4*/
+
+
+    /*CARRUSEL Proximos cumpleaños*/
+    var timer = 4000;
+
+    var i = 0;
+    var max = $('#c > li').length;
+ 
+	$("#c > li").eq(i).addClass('active').css('left','0');
+	$("#c > li").eq(i + 1).addClass('active').css('left','25%');
+	$("#c > li").eq(i + 2).addClass('active').css('left','50%');
+	$("#c > li").eq(i + 3).addClass('active').css('left','75%');
+ 
+
+	setInterval(function(){ 
+
+		$("#c > li").removeClass('active');
+
+		$("#c > li").eq(i).css('transition-delay','0.25s');
+		$("#c > li").eq(i + 1).css('transition-delay','0.5s');
+		$("#c > li").eq(i + 2).css('transition-delay','0.75s');
+		$("#c > li").eq(i + 3).css('transition-delay','1s');
+
+		if (i < max-4) {
+			i = i+4; 
+		}
+
+		else { 
+			i = 0; 
+		}  
+
+		$("#c > li").eq(i).css('left','0').addClass('active').css('transition-delay','1.25s');
+		$("#c > li").eq(i + 1).css('left','25%').addClass('active').css('transition-delay','1.5s');
+		$("#c > li").eq(i + 2).css('left','50%').addClass('active').css('transition-delay','1.75s');
+		$("#c > li").eq(i + 3).css('left','75%').addClass('active').css('transition-delay','2s');
+	
+	}, timer);
+ 
+    /*CARRUSEL 4*/
+
+
+}); 
+{{/js}}
+
