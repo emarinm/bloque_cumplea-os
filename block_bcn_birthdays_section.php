@@ -11,11 +11,7 @@ class block_bcn_birthdays_section extends block_base
 
      //Este metodo se ejecuta despues del init y permite poder modificar el titulo una vez que se inicializa.
     public function specialization() {
-
-
-
     }
-
     
     public function get_content()
     {
@@ -27,9 +23,9 @@ class block_bcn_birthdays_section extends block_base
         $theme = theme_config::load('bcn');
 
         $PAGE->requires->css("/blocks/bcn_birthdays_section/styles/bcn_birthdays_section.css");        
-         $PAGE->requires->css('/blocks/bcn_birthdays_section/styles/slick/slick.css');
-         $PAGE->requires->css('/blocks/bcn_birthdays_section/styles/slick/slick-theme.css');
-         $PAGE->requires->js_call_amd('block_bcn_birthdays_section/slick');
+        $PAGE->requires->css('/blocks/bcn_birthdays_section/styles/slick/slick.css');
+        $PAGE->requires->css('/blocks/bcn_birthdays_section/styles/slick/slick-theme.css');
+        $PAGE->requires->js_call_amd('block_bcn_birthdays_section/slick');
 
         $fs = get_file_storage();
         $sort = "itemid, filepath, filename";
@@ -66,7 +62,7 @@ class block_bcn_birthdays_section extends block_base
         $block_bg_color = ($this->config->block_bg_color) ? $this->config->block_bg_color : $theme->settings->site_background_color;
         //TODAY BIRTHDAY
         $today_birtdays_date_color = ($this->config) ? $this->config->today_birtdays_date_color : "#FFFFFF";        
-        $today_birtdays_carrusel = ($this->config) ? $this->config->today_birtdays_carrusel : 1;             
+        $today_birtdays_carrusel = ($this->config) ? $this->config->today_birtdays_carrusel : 2;             
         $today_birtdays_date_bg_color = ($this->config) ? $this->config->today_birtdays_date_bg_color : $theme->settings->secondary_brandcolor;        
         $today_birtdays_name_color = ($this->config) ? $this->config->today_birtdays_name_color : $theme->settings->site_text_color;    
 
@@ -198,7 +194,7 @@ class block_bcn_birthdays_section extends block_base
             foreach ($next_birthdays as $birth){        
                 $month_string = $arrmonths[ $birth->usermonth ];        
                 $var_name_date = strtoupper($birth->userday .' '.get_string('bcn_birthdays_section_article', 'block_bcn_birthdays_section') . ' ' .$month_string);
-                $position  = $clave->position ? $clave->position : '';
+                $position  = $birth->position ? $birth->position : '';
                 $next_birthdays_ff[] = (object) ['date' => $var_name_date ,'birthdays' => (object) [ 'name' => $birth->nombre_completo , 'position' => $position ] ];                
             }
         }else{
@@ -290,7 +286,6 @@ class block_bcn_birthdays_section extends block_base
         return $this->content;
     }
     
-
     public function formattedjson($v, $k)
     {
         $internal->date = $k;

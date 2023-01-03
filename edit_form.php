@@ -129,7 +129,7 @@ class block_bcn_birthdays_section_edit_form extends block_edit_form
 
         //carrusel type
         $select = $mform->addElement('select', 'config_today_birtdays_carrusel',  get_string('config_today_birtdays_carrusel', 'block_bcn_birthdays_section'), $opction_carrusel);
-        $mform->setDefault('config_today_birtdays_carrusel', 1);
+        $mform->setDefault('config_today_birtdays_carrusel', 2);
         $select->setMultiple(false);
     }
 
@@ -258,4 +258,5 @@ class block_bcn_birthdays_section_edit_form extends block_edit_form
         }
         return $data;
     }
+
 }

@@ -1,0 +1,774 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * External services.
+ *
+ * @package    block_bcn_birthdays_section
+ * @copyright  2022 Luis Mora
+ * @author     Luis Mora <lmora@bcnschool.cl>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace block_bcn_birthdays_section;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/externallib.php');
+
+use block_bcn_birthdays_section\util\certificates;
+
+use external_api;
+use external_function_parameters;
+use external_value;
+use external_multiple_structure;
+use external_single_structure;
+use stdClass;
+use moodle_url;
+use html_writer;
+use context_system;
+
+/**
+ * External class.
+ *
+ * @package    block_bcn_birthdays_section
+ * @copyright  2022 Lucas Catalan
+ * @author     Lucas Catalan <lcatalan@bcnschool.cl>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class external extends external_api
+{
+
+
+    /**
+     * External function parameters.
+     *
+     * @return external_function_parameters
+     */
+
+
+    public static function bcn_birthdays_section_upload_file_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'contextid' => new external_value(PARAM_INT, 'context id'),
+                'folderid' => new external_value(PARAM_INT, 'id of the folder'),
+                'filename' => new external_value(PARAM_FILE, 'filename'),
+                'filecontent' => new external_value(PARAM_RAW, 'filecontent')
+            )
+        );
+    }
+
+    /**
+     * upload file to filearea
+     *
+     * @param array $params
+     * @return stored_file
+     */
+    public static function bcn_birthdays_section_upload_file($contextid,  $folderid, $filename, $filecontent)
+    {
+        global $USER, $DB;
+
+        $tovalidate = array(
+            'contextid' => $contextid,
+            'folderid' => $folderid,
+            'filename' => $filename,
+            'filecontent' => $filecontent
+        );
+
+        $params = self::validate_parameters(self::bcn_birthdays_section_upload_file_parameters(), $tovalidate);
+
+
+        $context = \context::instance_by_id($params['contextid']);
+        $fs = get_file_storage();
+
+        //get file area from folder with folderid
+        $folder = $DB->get_record('bcn_birthdays_section_dir', array('id' => $params['folderid']));
+
+        //$folder =
+        $file_record = array(
+            'contextid' => $params['contextid'],
+            'component' => 'block_bcn_birthdays_section',
+            'filearea' => $folder->file_area,
+            'itemid' => file_get_new_itemid($folder->file_area),
+            'filepath' => '/',
+            'filename' => $params['filename'],
+            'userid' => $USER->id
+        );
+        //print_r($file_record);
+        return json_encode($fs->create_file_from_string($file_record, base64_decode($params['filecontent'])));
+    }
+
+    /**
+     * External function return values.
+     *
+     * @return external_value
+     */
+    public static function bcn_birthdays_section_upload_file_returns()
+    {
+        return new external_value(PARAM_RAW, 'stored_file');
+    }
+
+
+
+
+    public static function bcn_birthdays_section_create_folder_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'foldername' => new external_value(PARAM_RAW, 'filecontent'),
+                'parentid' => new external_value(PARAM_INT, 'context id'),
+                'folderdescription' => new external_value(PARAM_RAW, 'filecontent'),
+            )
+        );
+    }
+
+    /**
+     * upload file to filearea
+     *
+     * @param array $params
+     * @return stored_file
+     */
+    public static function bcn_birthdays_section_create_folder($name, $parentid, $description)
+    {
+        global $USER, $DB;
+
+        $tovalidate = array(
+            'parentid' => $parentid,
+            'foldername' => $name,
+            'folderdescription' => $description,
+        );
+
+        $params = self::validate_parameters(self::bcn_birthdays_section_create_folder_parameters(), $tovalidate);
+
+        $newfolder = new stdClass();
+
+        $newfolder->file_area = uniqid('bcnfm_');
+        $newfolder->name = $params['foldername'];
+        $newfolder->description = $params['folderdescription'];
+        //Path es obligatorio, pero aún no tenemos el id del registro a insertar, se crea valor por defecto, se actualizará al final de la función.
+        $newfolder->sort_order = 0;
+        $newfolder->path = '/';
+        $newfolder->parentid = 0;
+        $newfolder->view_type = 1;
+        $newfolder->created = time();
+        $newfolder->created_by = (int)$USER->id;
+
+        $newfolder->enabled = 1;
+
+        //Si la carpeta depende de otra, se indica sort_order y parent id
+        if ($params['parentid'] > 0) {
+            $newfolder->sort_order = get_folder_parent($parentid)->order + 1;
+            $newfolder->parentid = $params['parentid'];
+        }
+
+        //Se inserta registro
+        try {
+            $created_folder_id = $DB->insert_record('bcn_birthdays_section_dir', $newfolder);
+        } catch (\Throwable $th) {
+            return false;
+        }
+
+        $created_folder = new stdClass();
+        $created_folder->id = $created_folder_id;
+
+        //Se construye path evaluado si carpeta depende de otra o no
+        $created_folder->path = ($params['parentid'] > 0) ? get_folder_parent($parentid)->path . $created_folder->id . '/' :  '/' . $created_folder_id . '/';
+
+        //Se actualiza path de la carpeta
+        $DB->update_record('bcn_birthdays_section_dir', $created_folder);
+
+        //Resultado y retorno
+        $result = json_encode(array('folderid' => $created_folder_id, 'foldername' => $params['foldername']));
+        return $result;
+    }
+
+    /**
+     * External function return values.
+     *
+     * @return external_value
+     */
+    public static function bcn_birthdays_section_create_folder_returns()
+    {
+        return new external_value(PARAM_RAW, 'created_folder_info');
+    }
+
+
+
+
+    /**
+     * External function parameters.
+     *
+     * @return external_function_parameters
+     */
+
+
+    public static function bcn_birthdays_section_list_folder_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'folderid' => new external_value(PARAM_INT, 'id of the folder'),
+            )
+        );
+    }
+
+    /**
+     * List folders
+     *
+     * @param array $params
+     * @return stored_file
+     */
+    public static function bcn_birthdays_section_list_folder($folderid)
+    {
+        global  $DB;
+
+        $tovalidate = array(
+            'folderid' => $folderid
+        );
+
+        $params = self::validate_parameters(self::bcn_birthdays_section_list_folder_parameters(), $tovalidate);
+
+        //get file area from folder with folderid
+        $folders = $DB->get_records('bcn_birthdays_section_dir', array('parentid' => $params['folderid']), '', 'id, parentid, sort_order, name');
+
+
+
+        $folderstructure = array('folders' => $folders);
+
+        $sorted_folders  = array_values(sort_folders($folderstructure));
+
+        return json_encode($sorted_folders);
+    }
+
+    /**
+     * External function return values.
+     *
+     * @return external_value
+     */
+    public static function bcn_birthdays_section_list_folder_returns()
+    {
+        return new external_value(PARAM_RAW, 'folder_list');
+    }
+
+
+
+    /**
+     * External function parameters.
+     *
+     * @return external_function_parameters
+     */
+
+
+    public static function bcn_birthdays_section_list_folder_content_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'folderid' => new external_value(PARAM_INT, 'id of the folder'),
+            )
+        );
+    }
+
+    /**
+     * List folders
+     *
+     * @param array $params
+     * @return stored_file
+     */
+    public static function bcn_birthdays_section_list_folder_content($folderid)
+    {
+        global  $DB, $OUTPUT, $PAGE;
+        $context = context_system::instance();
+        $PAGE->set_context($context);
+
+        $tovalidate = array(
+            'folderid' => $folderid,
+
+        );
+
+        $params = self::validate_parameters(self::bcn_birthdays_section_list_folder_content_parameters(), $tovalidate);
+
+        if($params['folderid'] == 0){
+            $children_folders =  $DB->get_records('bcn_birthdays_section_dir', array('parentid' => 0), '', 'id, parentid, sort_order, name');
+        }else{
+            $folder = $DB->get_record('bcn_birthdays_section_dir', array('id' => $params['folderid']));
+            $children_folders =  $DB->get_records('bcn_birthdays_section_dir', array('parentid' => $params['folderid']), '', 'id, parentid, sort_order, name');
+        }
+        //get file area from folder with folderid
+       
+
+        
+        $files['has_content'] = false;
+
+        //var_dump($children_folders);
+
+        $fs = get_file_storage();
+        $sort = "itemid, filepath, filename";
+        $result = $fs->get_area_files(1, 'block_bcn_birthdays_section', $folder->file_area, false,  $sort, false);
+
+        if ($children_folders) {
+            $files['has_content'] = true;
+            foreach ($children_folders as $cfolder) {
+                $icon =  $OUTPUT->pix_icon('f/folder',   $cfolder->name);
+
+                $out[] = array(
+                    'name' => $cfolder->name,
+                    'id' => $cfolder->id,
+                    'isfile' => false,
+                    'type_icon' => $icon,
+                    'edit_btn' => html_writer::link(
+                        'javascript:void(0);',
+                        html_writer::tag(
+                            'i',
+                            '',
+                            array('class' => 'fa fa-pencil-square-o', 'aria-hidden' => 'true', 'style' => 'padding-right: 15px;')
+                        ),
+                        array(
+                            'data-toggle' => 'modal', 'data-target' => '#rename_folder',
+                            'data-whatever' => '@fat', 'folder_id' => $cfolder->id, 'class' => 'edit_folder'
+                        )
+                    ),
+                    'del_btn' => html_writer::link(
+                        'javascript:void(0);',
+                        html_writer::tag(
+                            'i',
+                            '',
+                            array('class' => 'fa fa-trash-o', 'aria-hidden' => 'true')
+                        ),
+                        array('class' => 'del_folder', 'folder_id' => $cfolder->id)
+                    )
+                );
+            }
+        }
+
+
+        if ($result) {
+            $files['has_content'] = true;
+            foreach ($result as $file) {
+
+                $icon =  $OUTPUT->pix_icon(file_file_icon($file, 32), get_mimetype_description($file));
+
+                $url_dwnl = moodle_url::make_pluginfile_url(1, $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), true);
+                $url_view = moodle_url::make_pluginfile_url(1, $file->get_component(), $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename(), false);
+
+                $out[] = array(
+                    'name' => $file->get_filename(),
+                    'id' => $file->get_itemid(),
+                    'isfile' => true,
+                    'type_icon' => $icon,
+                    'download_btn' => html_writer::link(
+                        $url_dwnl,
+                        html_writer::tag(
+                            'i',
+                            '',
+                            array('class' => 'fa fa-download', 'aria-hidden' => 'true', 'style' => 'padding-right: 15px;', 'id' => 'dwnl_file', 'file_id' => $file->get_itemid())
+                        )
+                    ), 'view_btn' => html_writer::link(
+                        $url_view,
+                        html_writer::tag(
+                            'i',
+                            '',
+                            array('class' => 'fa fa-eye', 'aria-hidden' => 'true', 'style' => 'padding-right: 15px;', 'id' => 'view_file', 'file_id' => $file->get_itemid())
+                        )
+                    ),
+                    'del_btn' => html_writer::link(
+                        'javascript:void(0);',
+                        html_writer::tag(
+                            'i',
+                            '',
+                            array('class' => 'fa fa-trash-o', 'aria-hidden' => 'true')
+                        ),
+                        array('class' => 'del_file', 'file_id' => $file->get_itemid())
+                    )
+
+                );
+            }
+        }
+
+        $files['structure'] = empty($out) ? '' : $out;
+
+        return json_encode($files);
+    }
+
+    /**
+     * External function return values.
+     *
+     * @return external_value
+     */
+    public static function bcn_birthdays_section_list_folder_content_returns()
+    {
+        return new external_value(PARAM_RAW, 'folder_list');
+    }
+
+    public static function bcn_birthdays_section_breadcrumbs_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'folderid' => new external_value(PARAM_INT, 'id of the folder'),
+            )
+        );
+    }
+
+    /**
+     * List folders
+     *
+     * @param array $params
+     * @return stored_file
+     */
+    public static function bcn_birthdays_section_breadcrumbs($folderid)
+    {
+        global  $DB;
+
+        $tovalidate = array(
+            'folderid' => $folderid,
+
+        );
+
+        $params = self::validate_parameters(self::bcn_birthdays_section_breadcrumbs_parameters(), $tovalidate);
+
+        //get file area from folder with folderid
+        $folder = $DB->get_record('bcn_birthdays_section_dir', array('id' => $params['folderid']));
+
+
+        $path_elements = explode('/',  $folder->path);
+
+        //Limpiar elementos = '' y reindexar elementos
+        $path_elements = array_values(array_filter($path_elements));
+
+        $paths = array();
+        $active_path = array();
+        $previous_paths = array();
+        if($params['folderid'] != 0){
+            $previous_paths[0] = array('id' => 0, 'foldername' => 'Inicio');
+        }
+       
+        $active_path = array('id' => $params['folderid'], 'foldername' => $folder->name); 
+
+        if (count($path_elements) > 1) {
+           
+            array_pop($path_elements);
+            
+
+            foreach ($path_elements as $pre_path) {
+                $folder = $DB->get_record('bcn_birthdays_section_dir', array('id' => $pre_path));
+                $previous_paths[] = array('id' => $folder->id, 'foldername' => $folder->name); 
+            }
+        }
+        //
+        
+
+        $folder = array();
+        if($params['folderid'] == 0){
+            $paths['active'] = array('id' => 0, 'foldername' => 'Inicio');
+        }else{
+            $paths['active'] = $active_path;
+        }
+        $paths['previous'] = $previous_paths;
+        $folder['paths'] = $paths;
+
+        return json_encode($folder);
+    }
+
+    /**
+     * External function return values.
+     *
+     * @return external_value
+     */
+    public static function bcn_birthdays_section_breadcrumbs_returns()
+    {
+        return new external_value(PARAM_RAW, 'folder_list');
+    }
+
+
+
+    public static function bcn_birthdays_section_delete_file_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'folderid' => new external_value(PARAM_INT, 'id of the folder'),
+                'itemid' => new external_value(PARAM_INT, 'file id'),
+                'filename' => new external_value(PARAM_RAW, 'name of the file'),
+            )
+        );
+    }
+
+    /**
+     * List folders
+     *
+     * @param array $params
+     * @return stored_file
+     */
+    public static function bcn_birthdays_section_delete_file($folderid, $itemid, $filename)
+    {
+        global  $DB;
+
+        $tovalidate = array(
+            'folderid' => $folderid,
+            'itemid' => $itemid,
+            'filename' => $filename,
+        );
+
+        $params = self::validate_parameters(self::bcn_birthdays_section_delete_file_parameters(), $tovalidate);
+
+        //get file area from folder with folderid
+        $folder = $DB->get_record('bcn_birthdays_section_dir', array('id' => $params['folderid']));
+
+        $fs = get_file_storage();
+
+        // Prepare file record object
+        $fileinfo = array(
+            'component' => 'block_bcn_birthdays_section',
+            'filearea' => $folder->file_area,     // usually = table name
+            'itemid' => $params['itemid'],               // usually = ID of row in table
+            'contextid' => 1, // ID of context
+            'filepath' => '/',           // any path beginning and ending in /
+            'filename' => $params['filename'] // any filename
+        );
+
+        // Get file
+        $file = $fs->get_file(
+            $fileinfo['contextid'],
+            $fileinfo['component'],
+            $fileinfo['filearea'],
+            $fileinfo['itemid'],
+            $fileinfo['filepath'],
+            $fileinfo['filename']
+        );
+        $arrayReturn = array('deleted_file' => $file->get_filename(), 'status' => 'pending');
+        // Delete it if it exists
+        if ($file) {
+            $arrayReturn['status'] = 'ok';
+            $file->delete();
+            return json_encode($arrayReturn);
+        } else {
+            $arrayReturn['status'] = 'error';
+            return json_encode($arrayReturn);
+        }
+    }
+
+    /**
+     * External function return values.
+     *
+     * @return external_value
+     */
+    public static function bcn_birthdays_section_delete_file_returns()
+    {
+        return new external_value(PARAM_RAW, 'deleted_file');
+    }
+
+
+
+
+
+
+    public static function bcn_birthdays_section_edit_folder_name_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'folderid' => new external_value(PARAM_INT, 'folder id'),
+                'newfoldername' => new external_value(PARAM_RAW, 'new folder name'),
+
+            )
+        );
+    }
+
+    /**
+     * upload file to filearea
+     *
+     * @param array $params
+     * @return stored_file
+     */
+    public static function bcn_birthdays_section_edit_folder_name($folderid, $newfoldername)
+    {
+        global $USER, $DB;
+
+        $tovalidate = array(
+            'folderid' => $folderid,
+            'newfoldername' => $newfoldername,
+        );
+
+        $params = self::validate_parameters(self::bcn_birthdays_section_edit_folder_name_parameters(), $tovalidate);
+
+        $folder = new stdClass();
+
+        $folder->id = $params['folderid'];
+        $folder->name = $params['newfoldername'];
+
+
+
+        //Se actualiza path de la carpeta
+        $DB->update_record('bcn_birthdays_section_dir', $folder);
+
+        //Resultado y retorno
+        $result = json_encode(array('folderid' => $params['folderid'], 'status' => 'ok'));
+        return $result;
+    }
+
+    /**
+     * External function return values.
+     *
+     * @return external_value
+     */
+    public static function bcn_birthdays_section_edit_folder_name_returns()
+    {
+        return new external_value(PARAM_RAW, 'updated_folder_names');
+    }
+
+
+    public static function bcn_birthdays_section_delete_folder_parameters()
+    {
+        return new external_function_parameters(
+            array(
+                'folderid' => new external_value(PARAM_INT, 'folder id'),
+            )
+        );
+    }
+
+    /**
+     * upload file to filearea
+     *
+     * @param array $params
+     * @return stored_file
+     */
+    public static function bcn_birthdays_section_delete_folder($folderid)
+    {
+        global  $DB;
+        $tovalidate = array(
+            'folderid' => $folderid,
+
+        );
+
+        $params = self::validate_parameters(self::bcn_birthdays_section_delete_folder_parameters(), $tovalidate);
+
+        //get file area from folder with folderid
+        $folder = $DB->get_record('bcn_birthdays_section_dir', array('id' => $params['folderid']));
+
+        $children_folders =  $DB->get_records('bcn_birthdays_section_dir', array('parentid' => $params['folderid']), '', 'id, parentid, sort_order, name');
+
+        //1) If folder has files, delete files
+        $fs = get_file_storage();
+        $sort = "itemid, filepath, filename";
+        $file_result = $fs->get_area_files(1, 'block_bcn_birthdays_section', $folder->file_area, false,  $sort, false);
+
+        if ($file_result) {
+
+            foreach ($file_result as $file) {
+                $file->delete();
+            }
+        }
+
+        //2) If selected folder has children folders...
+
+        if ($children_folders) {
+
+            //2.a) If children folder has files, delete files
+            foreach ($children_folders as $cfolder) {
+                $cfolder_record = $DB->get_record('bcn_birthdays_section_dir', array('id' => $cfolder->id));
+
+                $cfolder_result = $fs->get_area_files(1, 'block_bcn_birthdays_section', $folder->file_area, false,  $sort, false);
+
+                if ($cfolder_result) {
+
+                    foreach ($cfolder_result as $cfile) {
+                        $cfile->delete();
+                    }
+                }
+                //2.b) Then Delete children folder.
+                $DB->delete_records('bcn_birthdays_section_dir', array('id' => $cfolder->id));
+            }
+        }
+
+
+        //3) Finally, delete selected folder
+        $DB->delete_records('bcn_birthdays_section_dir', array('id' => $params['folderid']));
+
+        $result = json_encode(array('folderid' => $params['folderid'], 'status' => 'deleted'));
+
+        return json_encode($result);
+    }
+
+    /**
+     * External function return values.
+     *
+     * @return external_value
+     */
+    public static function bcn_birthdays_section_delete_folder_returns()
+    {
+        return new external_value(PARAM_RAW, 'deleted_folder');
+    }
+}
+
+function get_folder_parent($parentid)
+{
+    global  $DB;
+
+    //First parent folder
+    $parentfolder = $DB->get_record('bcn_birthdays_section_dir', array('id' => $parentid));
+
+
+    return $parentfolder;
+}
+
+
+
+
+function file_get_new_itemid($filearea)
+{
+    global $DB, $USER;
+
+    if (isguestuser() or !isloggedin()) {
+        // guests and not-logged-in users can not be allowed to upload anything!!!!!!
+        print_error('noguest');
+    }
+
+
+    $fs = get_file_storage();
+    $randomitemid = rand(1, 999999999);
+    while ($files = $fs->get_area_files(1, 'block_bcn_birthdays_section', $filearea, $randomitemid)) {
+        $randomitemid = rand(1, 999999999);
+    }
+
+    return $randomitemid;
+}
+
+
+ function sort_folders($folderstructure)
+    {
+        $itemsbyreference = array();
+        // Build array of item references.
+        $tosort = $folderstructure['folders'];
+        $sortedclassname = 'folders';
+        foreach ($tosort as $key => &$item) {
+            $item                          = (array)$item;
+            $itemsbyreference[$item['id']] = &$item;
+            // Children array.
+            $itemsbyreference[$item['id']]['children'] = array();
+
+        }
+        // Set items as children of the relevant parent item.
+        foreach ($tosort as $key => &$item) {
+            if ($item['parentid'] && isset($itemsbyreference[$item['parentid']])) {
+                $itemsbyreference[$item['parentid']]['children'][] = &$item;
+            }
+        }
+
+        // Remove items that were added to parents elsewhere.
+        foreach ($tosort as $key => &$item) {
+            if ($item['parentid'] && isset($itemsbyreference[$item['parentid']])) {
+                unset($tosort[$key]);
+            }
+        }
+        return $tosort;
+    }
